@@ -30,3 +30,13 @@ plan-full-cluster:
 	terraform plan \
 		-var-file=terraform.full.tfvars \
 		-var="nomad_sha=$(NOMAD_SHA)"
+
+
+retry: cleanconfigstate
+	rm terraform.tfstate.*.backup
+	terraform apply --auto-approve
+
+cleanconfigstate:
+	terraform state rm 'module.nomad_server[0].null_resource.install_hcp_consul_config'
+	terraform state rm 'module.nomad_server[1].null_resource.install_hcp_consul_config'
+	terraform state rm 'module.nomad_server[2].null_resource.install_hcp_consul_config'

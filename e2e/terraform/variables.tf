@@ -196,3 +196,12 @@ variable "nomad_url_client_windows_2016_amd64" {
   type        = list(string)
   default     = []
 }
+
+
+# HCP
+
+variable "hcp_consul_cluster_id" {
+  description = "The ID of the HCP Consul cluster"
+  type        = string
+  default     = "nomad-e2e-shared-hcp-consul"
+}

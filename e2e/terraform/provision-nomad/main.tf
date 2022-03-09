@@ -242,3 +242,58 @@ EOF
   }
 
 }
+
+
+
+resource "null_resource" "install_hcp_consul_config" {
+  depends_on = [null_resource.upload_configs]
+
+  connection {
+    type        = "ssh"
+    user        = var.connection.user
+    host        = var.instance.public_ip
+    port        = var.connection.port
+    private_key = file(var.connection.private_key)
+    timeout     = "15m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /etc/consul.d",
+    ]
+  }
+  provisioner "file" {
+    source      = "uploads/consul.d/ca.pem"
+    destination = "/tmp/consul_ca.pem"
+  }
+  provisioner "file" {
+    source      = "uploads/consul.d/consul_client.json"
+    destination = "/tmp/consul_client.json"
+  }
+  provisioner "file" {
+    source      = "uploads/consul.d/client_acl.json"
+    destination = "/tmp/consul_client_acl.json"
+  }
+  provisioner "file" {
+    source      = "uploads/consul.d/consul_client_base.json"
+    destination = "/tmp/consul_client_base.json"
+  }
+  provisioner "file" {
+    source      = "uploads/consul.d/consul.service"
+    destination = "/tmp/consul.service"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo rm -rf /etc/consul.d/*",
+      "sudo mv /tmp/consul_ca.pem /etc/consul.d/ca.pem",
+      "sudo mv /tmp/consul_client_acl.json /etc/consul.d/acl.json",
+      "sudo mv /tmp/consul_client.json /etc/consul.d/consul_client.json",
+      "sudo mv /tmp/consul_client_base.json /etc/consul.d/consul_client_base.json",
+      "sudo mv /tmp/consul.service /etc/systemd/system/consul.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable consul",
+      "sudo systemctl restart consul",
+    ]
+  }
+
+}
