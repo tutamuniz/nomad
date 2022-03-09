@@ -4,9 +4,11 @@ module "nomad_server" {
   depends_on = [aws_instance.server]
   count      = var.server_count
 
-  platform = "linux_amd64"
+  platform = "linux"
+  arch = "linux_amd64"
+  role = "server"
+
   profile  = var.profile
-  role     = "server"
   index    = count.index
 
   # The specific version of Nomad deployed will default to whichever one of
@@ -48,9 +50,11 @@ module "nomad_client_ubuntu_bionic_amd64" {
   depends_on = [aws_instance.client_ubuntu_bionic_amd64]
   count      = var.client_count_ubuntu_bionic_amd64
 
-  platform = "linux_amd64"
+  platform = "linux"
+  arch = "linux_amd64"
+  role = "client"
+
   profile  = var.profile
-  role     = "client-linux"
   index    = count.index
 
   # The specific version of Nomad deployed will default to whichever one of
@@ -91,9 +95,10 @@ module "nomad_client_windows_2016_amd64" {
   depends_on = [aws_instance.client_windows_2016_amd64]
   count      = var.client_count_windows_2016_amd64
 
-  platform = "windows_amd64"
-  profile  = var.profile
-  role     = "client-windows"
+  platform = "windows"
+  arch = "windows_amd64"
+  role = "client"
+
   index    = count.index
 
   # The specific version of Nomad deployed will default to whichever one of

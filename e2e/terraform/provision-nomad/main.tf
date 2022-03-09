@@ -1,5 +1,5 @@
 locals {
-  provision_script = var.platform == "windows_amd64" ? "powershell C:/opt/provision.ps1" : "/opt/provision.sh"
+  provision_script = var.arch == "windows_amd64" ? "powershell C:/opt/provision.ps1" : "/opt/provision.sh"
 
   config_path = dirname("${path.root}/config/")
 
@@ -7,12 +7,12 @@ locals {
     fileset(local.config_path, "**"),
   ))
 
-  update_config_command = var.platform == "windows_amd64" ? "powershell -Command \"& { if (test-path /opt/config) { Remove-Item -Path /opt/config -Force -Recurse }; cp -r C:/tmp/config /opt/config }\"" : "sudo rm -rf /opt/config; sudo mv /tmp/config /opt/config"
+  update_config_command = var.arch == "windows_amd64" ? "powershell -Command \"& { if (test-path /opt/config) { Remove-Item -Path /opt/config -Force -Recurse }; cp -r C:/tmp/config /opt/config }\"" : "sudo rm -rf /opt/config; sudo mv /tmp/config /opt/config"
 
   # abstract-away platform-specific parameter expectations
-  _arg = var.platform == "windows_amd64" ? "-" : "--"
+  _arg = var.arch == "windows_amd64" ? "-" : "--"
 
-  tls_role = var.role == "server" ? "server" : "client"
+  tls_role = var.role
 }
 
 resource "null_resource" "provision_nomad" {
@@ -35,7 +35,7 @@ resource "null_resource" "provision_nomad" {
     host            = var.instance.public_ip
     port            = var.connection.port
     private_key     = file(var.connection.private_key)
-    target_platform = var.platform == "windows_amd64" ? "windows" : "unix"
+    target_platform = var.arch == "windows_amd64" ? "windows" : "unix"
     timeout         = "15m"
   }
 
@@ -86,7 +86,7 @@ data "template_file" "arg_profile" {
 }
 
 data "template_file" "arg_role" {
-  template = var.role != "" ? " ${local._arg}role ${var.role}" : ""
+  template = var.role != "" ? " ${local._arg}role ${var.role}_${var.platform}" : ""
 }
 
 data "template_file" "arg_index" {
@@ -111,7 +111,7 @@ resource "null_resource" "upload_nomad_binary" {
     host            = var.instance.public_ip
     port            = var.connection.port
     private_key     = file(var.connection.private_key)
-    target_platform = var.platform == "windows_amd64" ? "windows" : "unix"
+    target_platform = var.arch == "windows_amd64" ? "windows" : "unix"
     timeout         = "15m"
   }
 
@@ -133,7 +133,7 @@ resource "null_resource" "upload_configs" {
     host            = var.instance.public_ip
     port            = var.connection.port
     private_key     = file(var.connection.private_key)
-    target_platform = var.platform == "windows_amd64" ? "windows" : "unix"
+    target_platform = var.arch == "windows_amd64" ? "windows" : "unix"
     timeout         = "15m"
   }
 
@@ -245,6 +245,7 @@ EOF
 
 
 
+
 resource "null_resource" "install_hcp_consul_config" {
   depends_on = [null_resource.upload_configs]
 
@@ -293,6 +294,110 @@ resource "null_resource" "install_hcp_consul_config" {
       "sudo systemctl daemon-reload",
       "sudo systemctl enable consul",
       "sudo systemctl restart consul",
+    ]
+  }
+
+}
+
+
+# TODO: temporary
+
+
+resource "local_file" "nomad_base_config" {
+  sensitive_content = templatefile("etc/nomad.d/base.hcl", {})
+  filename        = "uploads/nomad.d/base.hcl"
+  file_permission = "0700"
+}
+
+resource "local_file" "nomad_role_config" {
+  sensitive_content = templatefile("etc/nomad.d/${var.role}-${var.platform}.hcl", {})
+  filename        = "uploads/nomad.d/${var.role}.hcl"
+  file_permission = "0700"
+}
+
+# TODO: make this select from index file, if available
+resource "local_file" "nomad_indexed_config" {
+  sensitive_content = templatefile("etc/nomad.d/index.hcl", {})
+  filename        = "uploads/nomad.d/${var.role}-${var.platform}-${var.index}.hcl"
+  file_permission = "0700"
+}
+
+resource "local_file" "nomad_tls_config" {
+  sensitive_content = templatefile("etc/nomad.d/tls.hcl", {})
+  filename        = "uploads/nomad.d/tls.hcl"
+  file_permission = "0700"
+}
+
+resource "local_file" "nomad_systemd_unit_file" {
+  sensitive_content = templatefile("etc/nomad.d/nomad-${var.role}.service", {})
+  filename        = "uploads/nomad.d/nomad-${var.role}.service"
+  file_permission = "0700"
+}
+
+resource "null_resource" "install_nomad_config" {
+  depends_on = [null_resource.upload_configs]
+
+  connection {
+    type        = "ssh"
+    user        = var.connection.user
+    host        = var.instance.public_ip
+    port        = var.connection.port
+    private_key = file(var.connection.private_key)
+    timeout     = "15m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /etc/nomad.d",
+      "mkdir -p /var/nomad",
+    ]
+  }
+
+  # created in hcp_consul.tf
+  provisioner "file" {
+    source      = "uploads/nomad.d/${var.role}-consul.hcl"
+    destination = "/tmp/${var.role}-consul.hcl"
+  }
+  # created in hcp_vault.tf
+  provisioner "file" {
+    source      = "uploads/nomad.d/${var.role}-vault.hcl"
+    destination = "/tmp/${var.role}-vault.hcl"
+  }
+
+  provisioner "file" {
+    source      = local_file.nomad_base_config.filename
+    destination = "/tmp/base.hcl"
+  }
+  provisioner "file" {
+    source      = local_file.nomad_role_config.filename
+    destination = "/tmp/${var.role}-${var.platform}.hcl"
+  }
+  provisioner "file" {
+    source      = local_file.nomad_indexed_config.filename
+    destination = "/tmp/${var.role}-${var.platform}-${var.index}.hcl"
+  }
+  provisioner "file" {
+    source      = local_file.nomad_tls_config.filename
+    destination = "/tmp/tls.hcl"
+  }
+  provisioner "file" {
+    source      = local_file.nomad_systemd_unit_file.filename
+    destination = "/tmp/nomad.service"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo rm -rf /etc/nomad.d/*",
+      "sudo mv /tmp/${var.role}-consul.hcl /etc/nomad.d/${var.role}-consul.hcl",
+      "sudo mv /tmp/${var.role}-vault.hcl /etc/nomad.d/${var.role}-vault.hcl",
+      "sudo mv /tmp/base.hcl /etc/nomad.d/base.hcl",
+      "sudo mv /tmp/${var.role}-${var.platform}.hcl /etc/nomad.d/${var.role}-${var.platform}.hcl",
+      "sudo mv /tmp/${var.role}-${var.platform}-${var.index}.hcl /etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl",
+      "sudo mv /tmp/tls.hcl /etc/nomad.d/tls.hcl",
+      "sudo mv /tmp/nomad.service /etc/systemd/system/nomad.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable nomad",
+      "sudo systemctl restart nomad",
     ]
   }
 

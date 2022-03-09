@@ -1,9 +1,3 @@
-variable "platform" {
-  type        = string
-  description = "Platform ID (ex. \"linux_amd64\" or \"windows_amd64\")"
-  default     = "linux_amd64"
-}
-
 variable "nomad_version" {
   type        = string
   description = "Nomad release version (ex. \"0.10.3\")"
@@ -70,9 +64,21 @@ variable "profile" {
   default     = ""
 }
 
+variable "arch" {
+  type        = string
+  description = "The architecture for this instance (ex. 'linux_amd64' or 'windows_amd64')"
+  default     = ""
+}
+
+variable "platform" {
+  type        = string
+  description = "The platform for this instance (ex. 'windows' or 'linux')"
+  default     = ""
+}
+
 variable "role" {
   type        = string
-  description = "The role in the configuration profile for this instance (ex. 'client-linux')"
+  description = "The role for this instance (ex. 'client' or 'server')"
   default     = ""
 }
 
