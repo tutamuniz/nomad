@@ -5,11 +5,11 @@ module "nomad_server" {
   count      = var.server_count
 
   platform = "linux"
-  arch = "linux_amd64"
-  role = "server"
+  arch     = "linux_amd64"
+  role     = "server"
 
-  profile  = var.profile
-  index    = count.index
+  profile = var.profile
+  index   = count.index
 
   # The specific version of Nomad deployed will default to whichever one of
   # nomad_sha, nomad_version, or nomad_local_binary is set, but if you want to
@@ -51,11 +51,11 @@ module "nomad_client_ubuntu_bionic_amd64" {
   count      = var.client_count_ubuntu_bionic_amd64
 
   platform = "linux"
-  arch = "linux_amd64"
-  role = "client"
+  arch     = "linux_amd64"
+  role     = "client"
 
-  profile  = var.profile
-  index    = count.index
+  profile = var.profile
+  index   = count.index
 
   # The specific version of Nomad deployed will default to whichever one of
   # nomad_sha, nomad_version, or nomad_local_binary is set, but if you want to
@@ -96,10 +96,10 @@ module "nomad_client_windows_2016_amd64" {
   count      = var.client_count_windows_2016_amd64
 
   platform = "windows"
-  arch = "windows_amd64"
-  role = "client"
+  arch     = "windows_amd64"
+  role     = "client"
 
-  index    = count.index
+  index = count.index
 
   # The specific version of Nomad deployed will default to whichever one of
   # nomad_sha, nomad_version, or nomad_local_binary is set, but if you want to
