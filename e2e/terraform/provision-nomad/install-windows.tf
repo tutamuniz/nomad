@@ -12,9 +12,12 @@ resource "null_resource" "install_nomad_binary_windows" {
     timeout         = "10m"
   }
 
+  # TODO: fix uploads to windows. These are failing with weird errors:
+  # 2022-03-10T14:34:02.499-0500 [ERROR] scp stderr: "At line:1 char:7\r\n+ \"scp\" -vt C:/tmp\r\n+       ~~~\r\nUnexpected token '-vt' in expression or statement.\r\nAt line:1 char:11\r\n+ \"scp\" -vt C:/tmp\r\n+           ~~~~~~\r\nUnexpected token '/tmp' in expression or statement.\r\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordEx \r\n   ception\r\n    + FullyQualifiedErrorId : UnexpectedToken\r\n \r\n"
+
   provisioner "file" {
     source      = var.nomad_local_binary
-    destination = "C://tmp/nomad"
+    destination = "/tmp/nomad"
   }
   provisioner "remote-exec" {
     inline = [

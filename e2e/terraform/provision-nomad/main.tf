@@ -47,11 +47,6 @@ resource "null_resource" "upload_consul_configs" {
     timeout         = "15m"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "mkdir -p /etc/consul.d",
-    ]
-  }
   provisioner "file" {
     source      = "uploads/shared/consul.d/ca.pem"
     destination = "/tmp/consul_ca.pem"
