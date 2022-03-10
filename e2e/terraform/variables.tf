@@ -93,6 +93,12 @@ variable "hcp_vault_cluster_id" {
   default     = "nomad-e2e-shared-hcp-vault"
 }
 
+variable "hcp_vault_namespace" {
+  description = "The namespace where the HCP Vault cluster policy works"
+  type        = string
+  default     = "admin"
+}
+
 # ----------------------------------------
 # If you want to deploy multiple versions you can use these variables to
 # provide a list of builds to override the values of nomad_sha, nomad_version,
