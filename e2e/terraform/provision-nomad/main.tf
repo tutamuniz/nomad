@@ -1,5 +1,7 @@
 locals {
   upload_dir = "uploads/${var.instance.public_ip}"
+
+  indexed_config_path = fileexists("etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl") ? "etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl" : "etc/nomad.d/index.hcl"
 }
 
 # TODO: install license
@@ -21,9 +23,8 @@ resource "local_file" "nomad_role_config" {
   file_permission   = "0700"
 }
 
-# TODO: make this select from index file, if available
 resource "local_file" "nomad_indexed_config" {
-  sensitive_content = templatefile("etc/nomad.d/index.hcl", {})
+  sensitive_content = templatefile(local.indexed_config_path, {})
   filename          = "${local.upload_dir}/nomad.d/${var.role}-${var.platform}-${var.index}.hcl"
   file_permission   = "0700"
 }

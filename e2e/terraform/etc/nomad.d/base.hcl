@@ -7,6 +7,10 @@ audit {
   enabled = true
 }
 
+acl {
+  enabled = true
+}
+
 telemetry {
   collection_interval        = "1s"
   disable_hostname           = true
