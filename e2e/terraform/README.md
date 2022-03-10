@@ -74,6 +74,7 @@ folder and upload them to the cluster during provisioning.
 * `etc/nomad.d` are the Nomad configuration files.
   * `base.hcl`, `tls.hcl`, `consul.hcl`, and `vault.hcl` are shared.
   * `server-linux.hcl`, `client-linux.hcl`, and `client-windows.hcl` are role and platform specific.
+  * `client-linux-0.hcl`, etc. are specific to individual instances.
 * `etc/consul.d` are the Consul agent configuration files.
 * `etc/acls` are ACL policy files for Consul and Vault.
 

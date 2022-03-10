@@ -2,13 +2,13 @@ PKG_PATH = $(shell pwd)/../../pkg/linux_amd64/nomad
 
 # deploy for quick local development testing
 
-plan: tidy
-	terraform plan -auto-approve \
+plan:
+	terraform plan \
 		-var="nomad_local_binary=$(PKG_PATH)" \
 		-var="client_count_ubuntu_bionic_amd64=2" \
 		-var="client_count_windows_2016_amd64=0"
 
-apply: tidy
+apply:
 	terraform apply -auto-approve \
 		-var="nomad_local_binary=$(PKG_PATH)" \
 		-var="client_count_ubuntu_bionic_amd64=2" \
@@ -25,10 +25,10 @@ destroy:
 
 # deploy what's in E2E nightly
 
-plan_full: tidy
-	terraform plan -auto-approve
+plan_full:
+	terraform plan
 
-apply_full: tidy
+apply_full:
 	terraform apply -auto-approve
 
 clean_full: destroy tidy
@@ -38,6 +38,8 @@ destroy_full:
 
 # util
 
+# don't run this by default in plan/apply because it prevents you from
+# updating a running cluster
 tidy:
 	rm -rf keys
 	mkdir keys
