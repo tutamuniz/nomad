@@ -85,6 +85,7 @@ resource "null_resource" "install_nomad_configs_windows" {
       "powershell Move-Item -Force -Path C://tmp/base.hcl C://opt/nomad.d/base.hcl",
       "powershell Move-Item -Force -Path C://tmp/${var.role}-${var.platform}.hcl C://opt/nomad.d/${var.role}-${var.platform}.hcl",
       "powershell Move-Item -Force -Path C://tmp/${var.role}-${var.platform}-${var.index}.hcl C://opt/nomad.d/${var.role}-${var.platform}-${var.index}.hcl",
+      "powershell Move-Item -Force -Path C://tmp/.environment C://opt/nomad.d/.environment",
 
       # TLS
       "powershell New-Item -Force -Path C://opt/nomad.d -Name tls -ItemType directory",

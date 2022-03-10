@@ -2,14 +2,17 @@ locals {
   upload_dir = "uploads/${var.instance.public_ip}"
 
   indexed_config_path = fileexists("etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl") ? "etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl" : "etc/nomad.d/index.hcl"
+
 }
 
-# TODO: install license
-# sudo touch /etc/nomad.d/.environment
-# if [ -n "$NOMAD_LICENSE" ]; then
-#   echo "NOMAD_LICENSE=${NOMAD_LICENSE}" > /tmp/.nomad-environment
-#   sudo mv /tmp/.nomad-environment /etc/nomad.d/.environment
-# fi
+# if nomad_license is unset, it'll be a harmless empty license file
+resource "local_file" "nomad_environment" {
+  sensitive_content = templatefile("etc/nomad.d/.environment", {
+    license = var.nomad_license
+  })
+  filename        = "${local.upload_dir}/nomad.d/.environment"
+  file_permission = "0700"
+}
 
 resource "local_file" "nomad_base_config" {
   sensitive_content = templatefile("etc/nomad.d/base.hcl", {})
@@ -92,6 +95,10 @@ resource "null_resource" "upload_nomad_configs" {
     destination = "/tmp/vault.hcl"
   }
 
+  provisioner "file" {
+    source      = local_file.nomad_environment.filename
+    destination = "/tmp/.environment"
+  }
   provisioner "file" {
     source      = local_file.nomad_base_config.filename
     destination = "/tmp/base.hcl"

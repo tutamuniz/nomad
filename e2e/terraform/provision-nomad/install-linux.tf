@@ -84,6 +84,7 @@ resource "null_resource" "install_nomad_configs_linux" {
       "sudo mv /tmp/base.hcl /etc/nomad.d/base.hcl",
       "sudo mv /tmp/${var.role}-${var.platform}.hcl /etc/nomad.d/${var.role}-${var.platform}.hcl",
       "sudo mv /tmp/${var.role}-${var.platform}-${var.index}.hcl /etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl",
+      "sudo mv /tmp/.environment /etc/nomad.d/.environment",
 
       # TLS
       "sudo mkdir /etc/nomad.d/tls",
