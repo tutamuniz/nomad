@@ -1,42 +1,47 @@
-NOMAD_SHA ?= $(shell git rev-parse HEAD)
 PKG_PATH = $(shell pwd)/../../pkg/linux_amd64/nomad
 
-# The version of nomad that gets deployed depends on an order of precedence
-# linked below
-# https://github.com/hashicorp/nomad/blob/main/e2e/terraform/README.md#nomad-version
-dev-cluster:
+# deploy for quick local development testing
+
+plan: tidy
+	terraform plan -auto-approve \
+		-var="nomad_local_binary=$(PKG_PATH)" \
+		-var="client_count_ubuntu_bionic_amd64=2" \
+		-var="client_count_windows_2016_amd64=0"
+
+apply: tidy
 	terraform apply -auto-approve \
-		-var="nomad_sha=$(NOMAD_SHA)"
+		-var="nomad_local_binary=$(PKG_PATH)" \
+		-var="client_count_ubuntu_bionic_amd64=2" \
+		-var="client_count_windows_2016_amd64=0"
 	terraform output environment
 
-dev-cluster-from-local:
-	terraform apply -auto-approve \
-		-var="nomad_local_binary=$(PKG_PATH)"
-	terraform output environment
+clean: destroy tidy
 
-clean:
+destroy:
+	terraform destroy -auto-approve \
+		-var="nomad_local_binary=$(PKG_PATH)" \
+		-var="client_count_ubuntu_bionic_amd64=2" \
+		-var="client_count_windows_2016_amd64=0"
+
+# deploy what's in E2E nightly
+
+plan_full: tidy
+	terraform plan -auto-approve
+
+apply_full: tidy
+	terraform apply -auto-approve
+
+clean_full: destroy tidy
+
+destroy_full:
 	terraform destroy -auto-approve
 
-full-cluster:
-	terraform apply -auto-approve \
-		-var-file=terraform.full.tfvars \
-		-var="nomad_sha=$(NOMAD_SHA)"
+# util
 
-plan-dev-cluster:
-	terraform plan \
-		-var="nomad_sha=$(NOMAD_SHA)"
-
-plan-full-cluster:
-	terraform plan \
-		-var-file=terraform.full.tfvars \
-		-var="nomad_sha=$(NOMAD_SHA)"
-
-
-retry: cleanconfigstate
-	rm terraform.tfstate.*.backup
-	terraform apply --auto-approve
-
-cleanconfigstate:
-	terraform state rm 'module.nomad_server[0].null_resource.install_hcp_consul_config'
-	terraform state rm 'module.nomad_server[1].null_resource.install_hcp_consul_config'
-	terraform state rm 'module.nomad_server[2].null_resource.install_hcp_consul_config'
+tidy:
+	rm -rf keys
+	mkdir keys
+	chmod 0700 keys
+	rm -rf uploads/*
+	git checkout uploads/README.md
+	rm -f terraform.tfstate.*.backup
