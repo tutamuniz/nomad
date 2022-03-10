@@ -86,7 +86,7 @@ data "consul_acl_token_secret_id" "nomad_servers_token" {
 }
 
 resource "local_file" "nomad_server_config_for_consul" {
-  sensitive_content = templatefile("etc/nomad.d/server-consul.hcl", {
+  sensitive_content = templatefile("etc/nomad.d/consul.hcl", {
     token               = data.consul_acl_token_secret_id.nomad_servers_token.secret_id
     client_service_name = "client-${local.random_name}"
     server_service_name = "server-${local.random_name}"
@@ -118,7 +118,7 @@ data "consul_acl_token_secret_id" "nomad_clients_token" {
 }
 
 resource "local_file" "nomad_client_config_for_consul" {
-  sensitive_content = templatefile("etc/nomad.d/client-consul.hcl", {
+  sensitive_content = templatefile("etc/nomad.d/consul.hcl", {
     token               = data.consul_acl_token_secret_id.nomad_clients_token.secret_id
     client_service_name = "client-${local.random_name}"
     server_service_name = "server-${local.random_name}"
