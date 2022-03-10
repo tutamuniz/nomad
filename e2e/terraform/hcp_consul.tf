@@ -8,7 +8,6 @@ data "hcp_consul_cluster" "e2e_shared_consul" {
   cluster_id = var.hcp_consul_cluster_id
 }
 
-
 # policy and configuration for the Consul Agent
 
 resource "consul_acl_policy" "consul_agent" {
