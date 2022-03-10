@@ -69,20 +69,6 @@ resource "null_resource" "upload_consul_configs" {
   }
 }
 
-# TODO
-resource "null_resource" "upload_vault_configs" {
-
-  connection {
-    type            = "ssh"
-    user            = var.connection.user
-    host            = var.instance.public_ip
-    port            = var.connection.port
-    private_key     = file(var.connection.private_key)
-    target_platform = var.arch == "windows_amd64" ? "windows" : "unix"
-    timeout         = "15m"
-  }
-}
-
 resource "null_resource" "upload_nomad_configs" {
 
   connection {

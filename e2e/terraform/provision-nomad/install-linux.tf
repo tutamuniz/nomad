@@ -58,24 +58,6 @@ resource "null_resource" "install_consul_configs_linux" {
   }
 }
 
-# TODO
-resource "null_resource" "install_vault_configs_linux" {
-  count = var.platform == "linux" ? 1 : 0
-
-  depends_on = [
-    null_resource.upload_vault_configs,
-  ]
-
-  connection {
-    type        = "ssh"
-    user        = var.connection.user
-    host        = var.instance.public_ip
-    port        = var.connection.port
-    private_key = file(var.connection.private_key)
-    timeout     = "5m"
-  }
-}
-
 resource "null_resource" "install_nomad_configs_linux" {
   count = var.platform == "linux" ? 1 : 0
 
@@ -122,7 +104,6 @@ resource "null_resource" "restart_linux_services" {
   depends_on = [
     null_resource.install_nomad_binary_linux,
     null_resource.install_consul_configs_linux,
-    # null_resource.install_vault_configs_linux,
     null_resource.install_nomad_configs_linux,
   ]
 

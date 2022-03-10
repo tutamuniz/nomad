@@ -57,25 +57,6 @@ resource "null_resource" "install_consul_configs_windows" {
   }
 }
 
-# TODO
-resource "null_resource" "install_vault_configs_windows" {
-  count = var.platform == "windows" ? 1 : 0
-
-  depends_on = [
-    null_resource.upload_vault_configs,
-  ]
-
-  connection {
-    type            = "ssh"
-    user            = var.connection.user
-    host            = var.instance.public_ip
-    port            = var.connection.port
-    private_key     = file(var.connection.private_key)
-    target_platform = "windows"
-    timeout         = "5m"
-  }
-}
-
 resource "null_resource" "install_nomad_configs_windows" {
   count = var.platform == "windows" ? 1 : 0
 
@@ -121,7 +102,6 @@ resource "null_resource" "restart_windows_services" {
   depends_on = [
     null_resource.install_nomad_binary_windows,
     null_resource.install_consul_configs_windows,
-    # null_resource.install_vault_configs_windows,
     null_resource.install_nomad_configs_windows,
   ]
 
