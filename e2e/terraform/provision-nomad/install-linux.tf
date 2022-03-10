@@ -1,6 +1,6 @@
 resource "local_file" "nomad_systemd_unit_file" {
   sensitive_content = templatefile("etc/nomad.d/nomad-${var.role}.service", {})
-  filename          = "${local.upload_dir}/nomad.d/nomad-${var.role}.service"
+  filename          = "${local.upload_dir}/nomad.d/nomad.service"
   file_permission   = "0700"
 }
 
@@ -97,8 +97,8 @@ resource "null_resource" "install_nomad_configs_linux" {
       "mkdir -p /etc/nomad.d",
       "mkdir -p /opt/nomad/data",
       "sudo rm -rf /etc/nomad.d/*",
-      "sudo mv /tmp/${var.role}-consul.hcl /etc/nomad.d/${var.role}-consul.hcl",
-      "sudo mv /tmp/${var.role}-vault.hcl /etc/nomad.d/${var.role}-vault.hcl",
+      "sudo mv /tmp/consul.hcl /etc/nomad.d/consul.hcl",
+      "sudo mv /tmp/vault.hcl /etc/nomad.d/vault.hcl",
       "sudo mv /tmp/base.hcl /etc/nomad.d/base.hcl",
       "sudo mv /tmp/${var.role}-${var.platform}.hcl /etc/nomad.d/${var.role}-${var.platform}.hcl",
       "sudo mv /tmp/${var.role}-${var.platform}-${var.index}.hcl /etc/nomad.d/${var.role}-${var.platform}-${var.index}.hcl",

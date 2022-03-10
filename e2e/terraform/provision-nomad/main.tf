@@ -52,23 +52,23 @@ resource "null_resource" "upload_consul_configs" {
     ]
   }
   provisioner "file" {
-    source      = "uploads/consul.d/ca.pem"
+    source      = "uploads/shared/consul.d/ca.pem"
     destination = "/tmp/consul_ca.pem"
   }
   provisioner "file" {
-    source      = "uploads/consul.d/consul_client.json"
+    source      = "uploads/shared/consul.d/consul_client.json"
     destination = "/tmp/consul_client.json"
   }
   provisioner "file" {
-    source      = "uploads/consul.d/client_acl.json"
+    source      = "uploads/shared/consul.d/client_acl.json"
     destination = "/tmp/consul_client_acl.json"
   }
   provisioner "file" {
-    source      = "uploads/consul.d/consul_client_base.json"
+    source      = "uploads/shared/consul.d/consul_client_base.json"
     destination = "/tmp/consul_client_base.json"
   }
   provisioner "file" {
-    source      = "uploads/consul.d/consul.service"
+    source      = "uploads/shared/consul.d/consul.service"
     destination = "/tmp/consul.service"
   }
 }
@@ -102,12 +102,12 @@ resource "null_resource" "upload_nomad_configs" {
   # created in hcp_consul.tf
   provisioner "file" {
     source      = "uploads/shared/nomad.d/${var.role}-consul.hcl"
-    destination = "/tmp/${var.role}-consul.hcl"
+    destination = "/tmp/consul.hcl"
   }
   # created in hcp_vault.tf
   provisioner "file" {
-    source      = "uploads/shared/nomad.d/${var.role}-vault.hcl"
-    destination = "/tmp/${var.role}-vault.hcl"
+    source      = "uploads/shared/nomad.d/vault.hcl"
+    destination = "/tmp/vault.hcl"
   }
 
   provisioner "file" {
@@ -139,7 +139,7 @@ resource "null_resource" "upload_nomad_configs" {
     destination = "/tmp/agent-${var.instance.public_ip}.crt"
   }
   provisioner "file" {
-    source      = var.tls_ca_cert
+    source      = "keys/tls_ca.crt"
     destination = "/tmp/ca.crt"
   }
 }
