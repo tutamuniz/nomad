@@ -8,7 +8,7 @@ Set-Location C:\opt
 
 Try {
     $releases = "https://releases.hashicorp.com"
-    $version = "1.9.4+ent"
+    $version = "1.11.4"
     $url = "${releases}/consul/${version}/consul_${version}_windows_amd64.zip"
 
     New-Item -ItemType Directory -Force -Path C:\opt\consul
@@ -21,6 +21,12 @@ Try {
     Move-Item consul.exe C:\opt\consul.exe -Force -ErrorAction Stop
     C:\opt\consul.exe version
     rm consul.zip
+
+    New-Service `
+      -Name "Consul" `
+      -BinaryPathName "C:\opt\consul.exe agent -config-dir C:\opt\consul.d" `
+      -StartupType "Automatic" `
+      -ErrorAction Ignore
 
 } Catch {
     Write-Output "Failed to install Consul."

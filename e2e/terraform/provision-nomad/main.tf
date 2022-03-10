@@ -2,6 +2,13 @@ locals {
   upload_dir = "uploads/${var.instance.public_ip}"
 }
 
+# TODO: install license
+# sudo touch /etc/nomad.d/.environment
+# if [ -n "$NOMAD_LICENSE" ]; then
+#   echo "NOMAD_LICENSE=${NOMAD_LICENSE}" > /tmp/.nomad-environment
+#   sudo mv /tmp/.nomad-environment /etc/nomad.d/.environment
+# fi
+
 resource "local_file" "nomad_base_config" {
   sensitive_content = templatefile("etc/nomad.d/base.hcl", {})
   filename          = "${local.upload_dir}/nomad.d/base.hcl"

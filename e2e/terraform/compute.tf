@@ -1,5 +1,5 @@
 locals {
-  ami_prefix = "nomad-e2e-v2"
+  ami_prefix = "nomad-e2e-v3"
 }
 
 resource "aws_instance" "server" {
