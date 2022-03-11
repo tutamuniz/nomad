@@ -6,7 +6,7 @@ resource "tls_private_key" "nomad" {
 resource "tls_cert_request" "nomad" {
   key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.nomad.private_key_pem
-  ip_addresses    = ["${var.instance.public_ip}", "${var.instance.private_ip}", "127.0.0.1"]
+  ip_addresses    = [var.instance.public_ip, var.instance.private_ip, "127.0.0.1"]
   dns_names       = ["${var.role}.global.nomad"]
 
   subject {

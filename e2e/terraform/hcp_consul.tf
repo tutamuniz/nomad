@@ -22,7 +22,7 @@ data "local_file" "consul_policy_for_consul_agent" {
 
 resource "consul_acl_token" "consul_agent_token" {
   description = "Consul agent token"
-  policies    = ["${consul_acl_policy.consul_agent.name}"]
+  policies    = [consul_acl_policy.consul_agent.name]
   local       = true
 }
 
@@ -76,7 +76,7 @@ data "local_file" "consul_policy_for_nomad_server" {
 
 resource "consul_acl_token" "nomad_servers_token" {
   description = "Nomad servers token"
-  policies    = ["${consul_acl_policy.nomad_servers.name}"]
+  policies    = [consul_acl_policy.nomad_servers.name]
   local       = true
 }
 
@@ -108,7 +108,7 @@ data "local_file" "consul_policy_for_nomad_clients" {
 
 resource "consul_acl_token" "nomad_clients_token" {
   description = "Nomad clients token"
-  policies    = ["${consul_acl_policy.nomad_clients.name}"]
+  policies    = [consul_acl_policy.nomad_clients.name]
   local       = true
 }
 
