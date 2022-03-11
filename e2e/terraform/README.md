@@ -21,6 +21,7 @@ account.
 > Terraform for file provisioning over ssh for Windows. If you want to
 > test vs Windows clients, you'll need to be on a version of TF older
 > than 1.1.0
+> See: https://github.com/hashicorp/terraform/issues/30661
 
 Configure the following environment variables. For HashiCorp Nomad
 developers, this configuration can be found in 1Pass in the Nomad
