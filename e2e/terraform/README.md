@@ -24,11 +24,19 @@ team's vault under `nomad-e2e`.
 ```
 export HCP_CLIENT_ID=
 export HCP_CLIENT_SECRET=
-export VAULT_TOKEN=
-export VAULT_ADDR=
-export VAULT_NAMESPACE=admin
 export CONSUL_HTTP_TOKEN=
 export CONSUL_HTTP_ADDR=
+```
+
+The Vault admin token will expire after 6 hours. If you haven't
+created one already use the separate Terraform configuration found in
+the `hcp-vault-auth` directory. The following will set the correct
+values for `VAULT_TOKEN`, `VAULT_ADDR`, and `VAULT_NAMESPACE`:
+
+```
+cd ./hcp-vault-auth
+terraform apply --auto-approve
+$(terraform output environment --raw)
 ```
 
 Optionally, edit the `terraform.tfvars` file to change the number of
