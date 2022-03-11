@@ -12,7 +12,7 @@ Try {
     $url = "${releases}/consul/${version}/consul_${version}_windows_amd64.zip"
 
     New-Item -ItemType Directory -Force -Path C:\opt\consul
-    New-Item -ItemType Directory -Force -Path C:\opt\consul.d
+    New-Item -ItemType Directory -Force -Path C:\etc\consul.d
 
     # TODO: check sha!
     Write-Output "Downloading Consul from: $url"
@@ -24,7 +24,7 @@ Try {
 
     New-Service `
       -Name "Consul" `
-      -BinaryPathName "C:\opt\consul.exe agent -config-dir C:\opt\consul.d" `
+      -BinaryPathName "C:\opt\consul.exe agent -config-dir C:\etc\consul.d" `
       -StartupType "Automatic" `
       -ErrorAction Ignore
 

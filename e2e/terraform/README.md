@@ -17,6 +17,11 @@ assumes that an appropriate instance role has been configured
 elsewhere and that you have the ability to `AssumeRole` into the AWS
 account.
 
+> Note: there appears to be a regression in recent versions of
+> Terraform for file provisioning over ssh for Windows. If you want to
+> test vs Windows clients, you'll need to be on a version of TF older
+> than 1.1.0
+
 Configure the following environment variables. For HashiCorp Nomad
 developers, this configuration can be found in 1Pass in the Nomad
 team's vault under `nomad-e2e`.

@@ -12,7 +12,7 @@ Try {
     $url = "${releases}/nomad/${version}/nomad_${version}_windows_amd64.zip"
 
     New-Item -ItemType Directory -Force -Path C:\opt\nomad
-    New-Item -ItemType Directory -Force -Path C:\opt\nomad.d
+    New-Item -ItemType Directory -Force -Path C:\etc\nomad.d
 
     # TODO: check sha!
     Write-Output "Downloading Nomad from: $url"
@@ -32,7 +32,7 @@ Try {
 
     New-Service `
       -Name "Nomad" `
-      -BinaryPathName "C:\opt\nomad.exe agent -config C:\opt\nomad.d" `
+      -BinaryPathName "C:\opt\nomad.exe agent -config C:\etc\nomad.d" `
       -StartupType "Automatic" `
       -ErrorAction Ignore
 
