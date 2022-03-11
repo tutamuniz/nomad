@@ -5,12 +5,14 @@ PKG_PATH = $(shell pwd)/../../pkg/linux_amd64/nomad
 plan:
 	terraform plan \
 		-var="nomad_local_binary=$(PKG_PATH)" \
+		-var="volumes=false" \
 		-var="client_count_ubuntu_bionic_amd64=2" \
 		-var="client_count_windows_2016_amd64=0"
 
 apply:
 	terraform apply -auto-approve \
 		-var="nomad_local_binary=$(PKG_PATH)" \
+		-var="volumes=false" \
 		-var="client_count_ubuntu_bionic_amd64=2" \
 		-var="client_count_windows_2016_amd64=0"
 
