@@ -1,5 +1,5 @@
 log_file   = "C:\\opt\\nomad\\nomad.log"
-plugin_dir = "/opt/nomad/plugins"
+plugin_dir = "C:\\opt\\nomad\\plugins"
 
 client {
   enabled = true

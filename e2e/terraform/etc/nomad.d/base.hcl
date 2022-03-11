@@ -1,5 +1,5 @@
 bind_addr    = "0.0.0.0"
-data_dir     = "/opt/nomad/data"
+data_dir     = "${data_dir}"
 enable_debug = true
 log_level    = "debug"
 
