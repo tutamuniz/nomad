@@ -18,8 +18,8 @@ resource "local_file" "nomad_base_config" {
   sensitive_content = templatefile("etc/nomad.d/base.hcl", {
     data_dir = var.platform != "windows" ? "/opt/nomad/data" : "C://opt/nomad/data"
   })
-  filename          = "${local.upload_dir}/nomad.d/base.hcl"
-  file_permission   = "0700"
+  filename        = "${local.upload_dir}/nomad.d/base.hcl"
+  file_permission = "0700"
 }
 
 resource "local_file" "nomad_role_config" {
