@@ -43,6 +43,7 @@ EOM
 # here
 output "environment" {
   description = "get connection config by running: $(terraform output environment)"
+  sensitive   = true
   value       = <<EOM
 export NOMAD_ADDR=https://${aws_instance.server[0].public_ip}:4646
 export NOMAD_CACERT=${abspath(path.root)}/keys/tls_ca.crt

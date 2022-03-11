@@ -13,7 +13,6 @@ apply:
 		-var="nomad_local_binary=$(PKG_PATH)" \
 		-var="client_count_ubuntu_bionic_amd64=2" \
 		-var="client_count_windows_2016_amd64=0"
-	terraform output environment
 
 clean: destroy tidy
 
