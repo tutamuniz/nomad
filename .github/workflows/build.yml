@@ -197,7 +197,7 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
           LD_FLAGS: ${{ needs.set-ld-flags.outputs.ldflags }}
-          CGO_ENABLED: 1
+          CGO_ENABLED: 0
         run: |
           mkdir -p dist out
           go build -o dist/ \
